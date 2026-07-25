@@ -1,12 +1,12 @@
 class Asset:
     def __init__(
         self,
-        asset_id,
         name,
         asset_type,
         brand,
         serial_number,
         status,
+        asset_id=None,
         employee_id=None
     ):
         self.asset_id = asset_id

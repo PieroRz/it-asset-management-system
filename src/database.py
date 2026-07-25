@@ -12,7 +12,7 @@ def create_tables():
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS employees (
-        employee_id INTEGER PRIMARY KEY,
+        employee_id INTEGER PRIMARY KEY AUTOINCREMENT,
         first_name TEXT NOT NULL,
         last_name TEXT NOT NULL
     )
@@ -20,7 +20,7 @@ def create_tables():
 
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS assets (
-        asset_id INTEGER PRIMARY KEY,
+        asset_id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         asset_type TEXT NOT NULL,
         brand TEXT NOT NULL,
@@ -41,16 +41,16 @@ def add_employee(employee):
 
     cursor.execute("""
     INSERT INTO employees (
-        employee_id,
         first_name,
         last_name
     )
-    VALUES (?, ?, ?)
+    VALUES (?, ?)
     """, (
-        employee.employee_id,
         employee.first_name,
         employee.last_name
     ))
+
+    employee.employee_id = cursor.lastrowid
 
     connection.commit()
     connection.close()
@@ -65,9 +65,9 @@ def get_all_employees():
 
     employees = [
         Employee(
-            row[0],
-            row[1],
-            row[2]
+            row[1],  # first_name
+            row[2],  # last_name
+            row[0]   # employee_id
         )
         for row in rows
     ]
