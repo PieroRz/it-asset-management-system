@@ -8,8 +8,7 @@ class Employee:
         return f"{self.first_name} {self.last_name}"
 
     def display_info(self):
-        print(f"Employee ID: {self.employee_id}")
-        print(f"First Name: {self.get_full_name()}")
+        print(f"{self.employee_id} - {self.get_full_name()}")
 
     def to_dict(self):
         return {

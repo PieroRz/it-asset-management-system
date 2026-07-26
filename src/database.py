@@ -1,5 +1,6 @@
 import sqlite3
 from employee import Employee
+from asset import Asset
 
 DATABASE_PATH = "data/assets.db"
 
@@ -75,3 +76,66 @@ def get_all_employees():
     connection.close()
 
     return employees
+
+def add_asset(asset):
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+    INSERT INTO assets (
+        name,
+        asset_type,
+        brand,
+        serial_number,
+        status,
+        employee_id
+    )
+    VALUES (?, ?, ?, ?, ?, ?)
+    """, (
+        asset.name,
+        asset.asset_type,
+        asset.brand,
+        asset.serial_number,
+        asset.status,
+        asset.employee_id
+    ))
+
+    asset.asset_id = cursor.lastrowid
+
+    connection.commit()
+    connection.close()
+
+def get_all_assets():
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT assets.asset_id,assets.name,assets.asset_type,assets.brand,assets.serial_number,assets.status,employees.first_name || ' ' || employees.last_name AS employee_name, assets.employee_id FROM assets LEFT JOIN employees ON assets.employee_id = employees.employee_id GROUP BY assets.asset_id;")
+
+    rows = cursor.fetchall()
+
+    assets = [
+        Asset(
+            row[1],  # name
+            row[2],  # asset_type
+            row[3],  # brand
+            row[4],  # serial_number
+            row[5],  # status
+            row[6],  # employee_name
+            row[7],  # employee_id
+            row[0]   # asset_id
+        )
+        for row in rows
+    ]
+
+    connection.close()
+
+    return assets
+
+def delete_asset(asset_id):
+    connection = get_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("DELETE FROM assets WHERE asset_id = ?", (asset_id,))
+
+    connection.commit()
+    connection.close()
